@@ -41,12 +41,10 @@ async def get_cards_menu(user_cards: List[Card], telegram_id: int):
     return {'text': text, 'markup': builder.as_markup()}
 
 
-@router.message(Command("my_cards"))
+@router.message(Command("cards"))
 async def cmd_my_cards(message, state: FSMContext):
     await state.clear()
-    print('okokoko')
     user_cards = get_user_cards(telegram_id=message.from_user.id)
-    print(user_cards)
     data = await get_cards_menu(user_cards, message.from_user.id)
 
     if type(message) == CallbackQuery:
