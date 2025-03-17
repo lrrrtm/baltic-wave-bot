@@ -1,12 +1,11 @@
-from aiogram import Router, F
-from aiogram.filters import Command
+from aiogram import Router
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, CallbackQuery, InlineKeyboardButton, ReplyKeyboardMarkup, InlineKeyboardMarkup
+from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from db.crud import get_user_cards, insert_order, remove_user_card
+from tg_bot.db.crud import get_user_cards, insert_order, remove_user_card
 from tg_bot.handlers.my_cards import cmd_my_cards, get_cards_menu
-from tg_bot.keyboards.callback_factories import CardListCF, AddCardCF, CardInfoCF, CardTopUpCF
+from tg_bot.keyboards.callback_factories import CardInfoCF, CardTopUpCF
 from utils.volna_api import VolnaCard
 
 router = Router()

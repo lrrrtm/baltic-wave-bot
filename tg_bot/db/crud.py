@@ -1,14 +1,8 @@
-import random
-import sys
-from datetime import datetime
 from typing import List
 from contextlib import contextmanager
 
-from sqlalchemy import select, or_
-from sqlalchemy.orm import aliased
-
-from db.models import Card, Order
-from db.database import Session
+from tg_bot.db.models import Card, Order
+from tg_bot.db.database import Session
 
 
 @contextmanager

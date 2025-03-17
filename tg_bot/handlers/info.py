@@ -1,9 +1,7 @@
-from aiogram import Router, F
+from aiogram import Router
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, ReplyKeyboardRemove
-
-from db.crud import get_user_cards
+from aiogram.types import Message
 
 router = Router()
 

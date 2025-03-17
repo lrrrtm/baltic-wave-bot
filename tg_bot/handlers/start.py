@@ -1,14 +1,13 @@
 import os
 
-from aiogram import Router, F
+from aiogram import Router
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, ReplyKeyboardRemove, CallbackQuery
 from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
-from aiohttp.log import client_logger
 from aiogram.types import FSInputFile
 
-from db.crud import get_user_cards, add_new_card
+from tg_bot.db.crud import get_user_cards, add_new_card
 from tg_bot.handlers.my_cards import cmd_my_cards
 from tg_bot.keyboards.callback_factories import AddCardCF
 from tg_bot.states.adding_card import AddingCardMessage

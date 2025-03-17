@@ -5,7 +5,7 @@ from datetime import datetime
 
 import telebot
 
-from db.crud import get_active_orders, update_order_status
+from tg_bot.db.crud import get_active_orders, update_order_status
 from utils.volna_api import VolnaCard
 
 bot = telebot.TeleBot(token=os.getenv("BOT_API_TOKEN"), parse_mode='HTML')

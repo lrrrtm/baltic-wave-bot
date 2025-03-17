@@ -1,13 +1,13 @@
 from typing import List
 
-from aiogram import Router, F
+from aiogram import Router
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, CallbackQuery, InlineKeyboardButton
+from aiogram.types import CallbackQuery
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from db.crud import get_user_cards
-from db.models import Card
+from tg_bot.db.crud import get_user_cards
+from tg_bot.db.models import Card
 from tg_bot.keyboards.callback_factories import CardListCF, AddCardCF, CardInfoCF
 from utils.volna_api import VolnaCard
 
