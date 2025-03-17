@@ -38,8 +38,8 @@ def active_orders_status():
                     bot.send_message(
                         chat_id=order.user_tid,
                         text=f"<b>💸 Пополнение баланса</b>"
-                             f"\n\nБаланс карты <b>{order.card_number}</b> успешно пополнен на <b>{order.amount}₽</b>"
-                             f"\nТекущий баланс: <b>{volna.card_balance // 100}₽</b>"
+                             f"\n\n✅ Баланс карты <b>{order.card_number}</b> успешно пополнен на <b>{order.amount}₽</b>"
+                             f"\n\n💰 Текущий баланс: <b>{volna.card_balance // 100}₽</b>"
                              f"\n\n🚌 Приятных поездок!"
                     )
 
