@@ -45,6 +45,15 @@ async def card_actions(callback: CallbackQuery, callback_data: CardInfoCF, state
                     )
                 )
 
+            builder.button(
+                text="⬅️ Назад",
+                callback_data=CardInfoCF(
+                    action=f"back",
+                    card_number=callback_data.card_number,
+                    card_id=callback_data.card_id
+                )
+            )
+
             builder.adjust(3)
 
             card_info = get_card_info(card_number=callback_data.card_number, telegram_id=callback.from_user.id)
@@ -84,7 +93,11 @@ async def card_actions(callback: CallbackQuery, callback_data: CardInfoCF, state
 async def pay_actions(callback: CallbackQuery, callback_data: CardTopUpCF, state: FSMContext):
     action = callback_data.action
 
-    if action.startswith("top_"):
+    if action == 'back':
+        await callback.message.delete()
+        await cmd_my_cards(callback, state)
+
+    elif action.startswith("top_"):
         amount = int(action.split("_")[-1])
 
         volna = VolnaCard(card_number=callback_data.card_number)

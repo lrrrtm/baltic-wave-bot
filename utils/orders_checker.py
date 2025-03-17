@@ -50,7 +50,7 @@ def active_orders_status():
                              f"\n\nПри пополнении баланса карты произошла ошибка: {error_text}."
                     )
 
-                elif not is_finished and (order.created_at - datetime.now()).seconds > 600:
+                elif not is_finished and (datetime.now() - order.created_at).seconds > 600:
                     update_order_status(id=order.id, order_status="cancelled")
 
         time.sleep(5)
