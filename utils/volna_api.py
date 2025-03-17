@@ -22,7 +22,7 @@ class VolnaCard:
             data = response.json()
             self.all_card_info = data
             self.card_id = data["cardId"]
-            self.expired_at = datetime.strptime(data['dateExpire'], '%Y-%m-%d')
+            self.expired_at = datetime.strptime(data['dateExpire'], '%Y-%m-%d') if data['beneficiaryDateTo'] is None else datetime.strptime(data['beneficiaryDateTo'], '%Y-%m-%d')
             self.last_ride = data.get('tripHistory')[0] if data.get('tripHistory') else None
             self.card_balance = data['balanceAmountCent']
             self.can_balance_be_topped_up = data['canBalanceBeToppedUp']
