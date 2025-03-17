@@ -24,5 +24,5 @@ class Order(Base):
     user_tid = Column(BigInteger)
     card_number = Column(VARCHAR)
     status = Column(VARCHAR, default='active')
-    created_at = Column(DateTime, default=datetime.utcnow)
-    modified_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=datetime.now())
+    modified_at = Column(DateTime, default=datetime.now(), onupdate=datetime.now())
