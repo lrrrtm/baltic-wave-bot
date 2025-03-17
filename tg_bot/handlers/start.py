@@ -90,7 +90,7 @@ async def add_card_process(message: Message, state: FSMContext):
                 add_new_card(card_number=int(input_card_number), telegram_id=message.from_user.id)
                 await message.answer(
                     text=f"<b>🆕 Добавление карты</b>"
-                         f"\n\nКарта <b>{volna.card_number}</b> успешно добавлена! Перейдите в /cards, чтобы посмотреть.",
+                         f"\n\n🎉 Карта <b>{volna.card_number}</b> успешно добавлена! Перейдите в /cards, чтобы посмотреть",
                     reply_markup=ReplyKeyboardRemove()
                 )
             else:
