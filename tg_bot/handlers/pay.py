@@ -3,8 +3,8 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from tg_bot.db.crud import get_user_cards, insert_order, remove_user_card
-from tg_bot.handlers.my_cards import cmd_my_cards, get_cards_menu
+from tg_bot.db.crud import get_user_cards, insert_order, remove_user_card, get_card_info
+from tg_bot.handlers.my_cards import cmd_my_cards, get_cards_menu, show_card_info
 from tg_bot.keyboards.callback_factories import CardInfoCF, CardTopUpCF
 from utils.volna_api import VolnaCard
 
@@ -45,20 +45,18 @@ async def card_actions(callback: CallbackQuery, callback_data: CardInfoCF, state
                     )
                 )
 
-            builder.button(
-                text="⬅️ Назад",
-                callback_data=CardTopUpCF(
-                    action="back",
-                    card_number=callback_data.card_number,
-                    card_id=callback_data.card_id
-                )
-            )
-
             builder.adjust(3)
+
+            card_info = get_card_info(card_number=callback_data.card_number, telegram_id=callback.from_user.id)
+
+            if card_info.card_name == str(callback_data.card_number):
+                card_name = ''
+            else:
+                card_name = f" «{card_info.card_name}»"
 
             await callback.message.edit_text(
                 text=f"<b>💸 Пополнение баланса</b>"
-                     f"\n\n<pre>{callback_data.card_number}</pre>"
+                     f"\n\nКарта: <b>{callback_data.card_number}{card_name}</b>"
                      f"\n\nВыберите сумму, на которую хотите пополнить баланс карты"
             )
 
@@ -86,10 +84,7 @@ async def card_actions(callback: CallbackQuery, callback_data: CardInfoCF, state
 async def pay_actions(callback: CallbackQuery, callback_data: CardTopUpCF, state: FSMContext):
     action = callback_data.action
 
-    if action == 'back':
-        pass
-
-    elif action.startswith("top_"):
+    if action.startswith("top_"):
         amount = int(action.split("_")[-1])
 
         volna = VolnaCard(card_number=callback_data.card_number)
@@ -97,9 +92,17 @@ async def pay_actions(callback: CallbackQuery, callback_data: CardTopUpCF, state
 
         if sbp_data is not None:
             await callback.answer()
+
+            card_info = get_card_info(card_number=callback_data.card_number, telegram_id=callback.from_user.id)
+
+            if card_info.card_name == str(callback_data.card_number):
+                card_name = ''
+            else:
+                card_name = f" «{card_info.card_name}»"
+
             await callback.message.edit_text(
                 text=f"<b>💸 Пополнение баланса</b>"
-                     f"\n\n<pre>{callback_data.card_number}</pre>"
+                     f"\n\nКарта: <b>{callback_data.card_number}{card_name}</b>"
                      f"\n\nДля пополнения баланса карты на {amount}₽ нажмите на кнопку под сообщением",
             )
             await callback.message.edit_reply_markup(
