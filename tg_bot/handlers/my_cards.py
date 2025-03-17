@@ -6,7 +6,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from tg_bot.db.crud import get_user_cards
+from tg_bot.db.crud import get_user_cards, get_card_info
 from tg_bot.db.models import Card
 from tg_bot.keyboards.callback_factories import CardListCF, AddCardCF, CardInfoCF
 from utils.volna_api import VolnaCard
@@ -20,7 +20,7 @@ async def get_cards_menu(user_cards: List[Card], telegram_id: int):
     if user_cards:
         for card in user_cards:
             builder.button(
-                text=f"{card.card_number}",
+                text=f"{card.card_name}",
                 callback_data=CardListCF(card_number=card.card_number, card_id=card.id)
             )
         builder.button(
@@ -60,7 +60,7 @@ async def cmd_my_cards(message, state: FSMContext):
 
 
 @router.callback_query((CardListCF.filter()))
-async def admin_menu_back_process(callback: CallbackQuery, callback_data: CardListCF, state: FSMContext):
+async def show_card_info(callback: CallbackQuery, callback_data: CardListCF, state: FSMContext):
 
     card_number = callback_data.card_number
     volna = VolnaCard(card_number=card_number)
@@ -100,9 +100,18 @@ async def admin_menu_back_process(callback: CallbackQuery, callback_data: CardLi
             last_ride_text = f"\n\n🚌 Последняя поездка\n<b>{volna.last_ride['dateTripString']} {volna.last_ride['vehicleTypeName']} №{volna.last_ride['routeNumber']} ({volna.last_ride['vehicleGovNumber'].upper()})</b>"
         else:
             last_ride_text = ""
+
+        card_info = get_card_info(card_number=card_number, telegram_id=callback.from_user.id)
+
+        if card_info.card_name == str(card_number):
+            card_name = ''
+        else:
+            card_name = f"\n«{card_info.card_name}»"
+
         await callback.message.edit_text(
-            text=f"<b>🪪 Информация о карте</b>"
-                 f"\n\n<pre>{card_number}</pre>"
+            text=f"<b>🪪 Информация о карте</b>\n"
+                 f"{card_name}"
+                 f"\n<pre>{card_number}</pre>"
                  f"\n\n💰 Текущий баланс: <b>{volna.card_balance // 100}₽</b>"
                  f"\n🗓️ Годна до: <b>{volna.expired_at.strftime('%d.%m.%Y')}</b>"
                  f"{last_ride_text}"

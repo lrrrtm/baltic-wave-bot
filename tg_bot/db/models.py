@@ -12,6 +12,7 @@ class Card(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     telegram_id = Column(BigInteger)
     card_number = Column(VARCHAR)
+    card_name = Column(VARCHAR)
 
 class Order(Base):
     __tablename__ = 'orders'

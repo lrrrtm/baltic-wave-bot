@@ -10,7 +10,7 @@ from aiogram.types import FSInputFile
 from tg_bot.db.crud import get_user_cards, add_new_card
 from tg_bot.handlers.my_cards import cmd_my_cards
 from tg_bot.keyboards.callback_factories import AddCardCF
-from tg_bot.states.adding_card import AddingCardMessage
+from tg_bot.states.adding_card import AddingCardMessage, AddingCardNameMessage
 from utils.volna_api import VolnaCard
 
 router = Router()
@@ -87,12 +87,21 @@ async def add_card_process(message: Message, state: FSMContext):
 
             if input_card_number not in user_cards:
 
-                add_new_card(card_number=int(input_card_number), telegram_id=message.from_user.id)
+                await state.update_data({'card_number': input_card_number})
+
+                builder = ReplyKeyboardBuilder()
+                builder.button(
+                    text="🫥 Оставить без названия"
+                )
+
                 await message.answer(
                     text=f"<b>🆕 Добавление карты</b>"
-                         f"\n\n🎉 Карта <b>{volna.card_number}</b> успешно добавлена! Перейдите в /cards, чтобы посмотреть",
-                    reply_markup=ReplyKeyboardRemove()
+                         f"\n\nВведите название для карты (например: «Карта Вани» или «Мамина»), чтобы её было удобно искать в списке карт."
+                         f"\n\nЕсли название не требуется, нажмите на «🫥 Оставить без названия»",
+                    reply_markup=builder.as_markup(resize_keyboard=True)
                 )
+
+                await state.set_state(AddingCardMessage.card_name)
             else:
                 await message.answer(
                     text="😎 Данная карта <b>уже привязана</b> к вашему аккаунту, введите номер другой карты или отмените добавление, нажав кнопку на клавиуатуре"
@@ -108,3 +117,26 @@ async def add_card_process(message: Message, state: FSMContext):
             text="😰 Карта с таким номером <b>не найдена</b>, проверьте правильность отправленного номера карты и попробоуйте ещё раз"
         )
         await state.set_state(AddingCardMessage.waiting_for_msg)
+
+
+@router.message(AddingCardMessage.card_name)
+async def add_card_name_process(message: Message, state: FSMContext):
+    card_number = await state.get_value('card_number')
+
+    card_name = message.text.strip() if message.text.strip() != '🫥 Оставить без названия' else str(card_number)
+
+
+    add_new_card(card_number=int(card_number), card_name=card_name, telegram_id=message.from_user.id)
+
+    if card_name == str(card_number):
+        text = ''
+    else:
+        text = f" «{card_name}»"
+
+    await message.answer(
+        text=f"<b>🆕 Добавление карты</b>"
+             f"\n\n🎉 Карта <b>{card_number}{text}</b> успешно добавлена! Перейдите в /cards, чтобы посмотреть",
+        reply_markup=ReplyKeyboardRemove()
+    )
+
+    await state.clear()

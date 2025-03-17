@@ -19,9 +19,9 @@ def get_session():
         session.close()
 
 
-def add_new_card(card_number: int, telegram_id: int) -> Card:
+def add_new_card(card_number: int, card_name: str, telegram_id: int) -> Card:
     with get_session() as session:
-        card = Card(telegram_id=telegram_id, card_number=str(card_number))
+        card = Card(telegram_id=telegram_id, card_number=str(card_number), card_name=card_name)
         session.add(card)
         session.commit()
         return card
@@ -66,6 +66,10 @@ def get_active_orders() -> List[Order]:
         data = session.query(Order).filter(Order.status == 'active').all()
         return data
 
+def get_card_info(card_number: int, telegram_id: int) -> Card:
+    with get_session() as session:
+        card = session.query(Card).filter(Card.card_number == card_number, Card.telegram_id == telegram_id).first()
+        return card
 
 if __name__ == "__main__":
     add_new_card(card_number=215050004534, telegram_id=409801981)

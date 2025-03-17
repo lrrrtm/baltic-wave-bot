@@ -35,7 +35,7 @@ async def card_actions(callback: CallbackQuery, callback_data: CardInfoCF, state
             await callback.answer()
             builder = InlineKeyboardBuilder()
 
-            for sum in [1, 100, 200, 350, 500, 1000]:
+            for sum in [50, 100, 200, 350, 500, 1000]:
                 builder.button(
                     text=f"{sum}₽",
                     callback_data=CardTopUpCF(
