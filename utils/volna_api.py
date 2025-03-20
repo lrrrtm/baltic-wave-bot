@@ -15,8 +15,13 @@ class VolnaCard:
         self._get_card_info()
 
     def _get_card_info(self):
-        url = f"{self.base_url}/card/information?cardNumber={self.card_number}"
-        response = requests.get(url)
+        url = f"{self.base_url}/card/check"
+        response = requests.post(
+            url=url,
+            json={
+                "cardNumber": str(self.card_number),
+            }
+        )
 
         if response.status_code == 200:
             data = response.json()
